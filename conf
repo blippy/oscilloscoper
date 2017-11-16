@@ -1,4 +1,13 @@
 #/usr/bin/env bash
 # only for use by mcarter. No-one else will be interested
 
-./configure --prefix=$HOME/.local
+
+if [ ! -f configure ]; then
+        autoreconf -iv
+fi
+
+DBG=--with-debug
+SAN=--with-asan
+OPTS="$DBG $GPROF $SAN"
+
+./configure $OPTS --prefix=$HOME/.local

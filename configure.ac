@@ -4,11 +4,11 @@ AC_INIT([oscilloscoper], [0.0.0])
 
 AC_CONFIG_SRCDIR([src/Main.cpp])
 AM_INIT_AUTOMAKE([foreign])
-#AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 
-#AX_ASAN
-#AX_DEBUG
-#AX_GPROF
+AX_ASAN
+AX_DEBUG
+AX_GPROF
 AC_PROG_RANLIB
 
 AC_SUBST(SDL2_CFLAGS, `pkg-config --cflags sdl2`)
