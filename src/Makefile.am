@@ -1,6 +1,6 @@
 AM_CXXFLAGS = @SDL2_CFLAGS@
 
-bin_PROGRAMS = oscilliscoper
+bin_PROGRAMS = oscilloscoper
 
-oscilliscoper_LDADD = @SDL2_LIBS@ -lavcodec -lavutil -lswscale DspFilters/libdspfilters.a
-oscilliscoper_SOURCES = Encoder.cpp Main.cpp Oscilloscope.cpp Screen.cpp Wave.cpp
+oscilloscoper_LDADD = @SDL2_LIBS@ -lavcodec -lavutil -lswscale DspFilters/libdspfilters.a
+oscilloscoper_SOURCES = Encoder.cpp Main.cpp Oscilloscope.cpp Screen.cpp Wave.cpp

@@ -12,4 +12,4 @@ config.status
 configure
 *.o
 *.a
-src/oscilliscoper
+src/oscilloscoper
