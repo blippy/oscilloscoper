@@ -13,7 +13,7 @@ class Encoder
 	int mWidth, mHeight, mFrameRate, mBitRate;
 	FILE *mOutputFile;
 	AVCodecContext *mCodecContext;
-	AVFrame *mFrame;
+	AVFrame *mFrame = nullptr;
 	AVPacket mPacket;
 	int mFrameNumber;
 	struct SwsContext * mSwsContext;

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Encoder.hpp"
 #include "SDL.h"
 
@@ -12,6 +13,10 @@ extern "C" {
 #include <libavutil/samplefmt.h>
 }
 
+
+using std::cout;
+using std::endl;
+
 Encoder::Encoder(int width, int height, int frameRate)
 	: mWidth(width), mHeight(height), mFrameRate(frameRate), 
 	mBitRate(8000000), mOutputFile(NULL)
@@ -25,6 +30,26 @@ Encoder::~Encoder()
 }
 
 	
+
+int encode(AVCodecContext *avctx, AVPacket *pkt, int *got_packet, AVFrame *frame)
+{
+	int ret;
+
+	*got_packet = 0;
+
+	ret = avcodec_send_frame(avctx, frame);
+	if (ret < 0)
+		return ret;
+
+	ret = avcodec_receive_packet(avctx, pkt);
+	if (!ret)
+		*got_packet = 1;
+	if (ret == AVERROR(EAGAIN))
+		return 0;
+
+	return ret;
+}
+
 void Encoder::writeFrame(SDL_Surface *data)
 {
 	
@@ -41,8 +66,11 @@ void Encoder::writeFrame(SDL_Surface *data)
 	sws_scale(mSwsContext, inData, inLinesize, 0, mHeight, mFrame->data, mFrame->linesize);
 	
 	mFrame->pts = mFrameNumber;
+	
 	/* encode the image */
-	ret = avcodec_encode_video2(mCodecContext, &mPacket, mFrame, &got_output);
+	//ret = avcodec_encode_video2(mCodecContext, &mPacket, mFrame, &got_output);
+	ret = encode(mCodecContext, &mPacket, &got_output, mFrame);
+
 	if (ret < 0) {
 		fprintf(stderr, "ERROR: Error encoding frame\n");
 		exit(1);
@@ -122,29 +150,42 @@ void Encoder::initEncoder(const char *filename)
 }
 
 
+void encode_delayed_frames()
+{
+	return;
+
+	// TODO this crashes, but presumably does something useful (mcarter 16-Nov-2017)
+	/*
+	*/
+}
+
 void Encoder::deinitEncoder()
 {
-	int got_output;
-	    /* get the delayed frames */
-    for (got_output = 1; got_output; mFrameNumber++) {
-        int ret = avcodec_encode_video2(mCodecContext, &mPacket, NULL, &got_output);
-        if (ret < 0) {
-            fprintf(stderr, "ERROR: Error encoding frame\n");
-            exit(1);
-        }
-        if (got_output) {
-            fwrite(mPacket.data, 1, mPacket.size, mOutputFile);
-            av_packet_unref(&mPacket);
-        }
-    }
-    
+	//encode_delayed_frames();
+	// encode delayed frames
+	cout << "Encoder::deinitEncoder:mFrame:" << mFrame << endl;
+	for (int got_output = 1; got_output; mFrameNumber++) {
+		cout << "Encoder::deinitEncoder:mFrameNumber:" << mFrameNumber << endl;
+		//int ret = avcodec_encode_video2(mCodecContext, &mPacket, NULL, &got_output);
+		//int ret = encode(mCodecContext, &mPacket, &got_output, NULL);
+		int ret = encode(mCodecContext, &mPacket, &got_output, mFrame);
+		if (ret < 0) {
+			fprintf(stderr, "ERROR: Error encoding frame\n");
+			exit(1);
+		}
+		if (got_output) {
+			fwrite(mPacket.data, 1, mPacket.size, mOutputFile);
+			av_packet_unref(&mPacket);
+		}
+	}
+
 	avcodec_close(mCodecContext);
-    av_free(mCodecContext);
-    av_freep(&mFrame->data[0]);
-    av_frame_free(&mFrame);
-	
+	av_free(mCodecContext);
+	av_freep(&mFrame->data[0]);
+	av_frame_free(&mFrame);
+
 	sws_freeContext(mSwsContext);
-	
+
 	if (mOutputFile != NULL)
 		fclose(mOutputFile);
 }
