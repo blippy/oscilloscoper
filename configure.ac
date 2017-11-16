@@ -9,12 +9,13 @@ AM_INIT_AUTOMAKE([foreign])
 #AX_ASAN
 #AX_DEBUG
 #AX_GPROF
+AC_PROG_RANLIB
 
 AC_SUBST(SDL2_CFLAGS, `pkg-config --cflags sdl2`)
 AC_SUBST(SDL2_LIBS, `pkg-config --libs sdl2`)
 
 AC_PROG_CXX
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/DspFilters/Makefile src/Makefile])
 AC_OUTPUT
 
