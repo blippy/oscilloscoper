@@ -4,8 +4,8 @@ class Wave;
 class SDL_Renderer;
 class SDL_Rect;
 
-#include "DSPFilters/Filter.h"
-#include "DSPFilters/ChebyshevI.h"
+#include "DspFilters/Filter.h"
+#include "DspFilters/ChebyshevI.h"
 
 class Oscilloscope
 {
