@@ -1,0 +1,4 @@
+#/usr/bin/env bash
+# only for use by mcarter. No-one else will be interested
+
+./configure --prefix=$HOME/.local
